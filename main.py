@@ -8,7 +8,7 @@ with open("config/server_list.json", "r") as f:
     server_list = json.load(f)
 
 
-def get_xonotic_server_status(host: str, port: int = 26001):
+def get_xonotic_server_status(host: str, port: int = 26000):
     request = b'\xFF\xFF\xFF\xFFgetstatus'
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(3)
@@ -20,6 +20,7 @@ def get_xonotic_server_status(host: str, port: int = 26001):
 
         max_players_match = re.search(r"sv_maxclients\\(\d+)", response)
         current_players_match = re.search(r"(?<!sv_)\\clients\\(\d+)", response)
+        current_map = re.search(r"mapname//(\d+)", response)
 
         max_players = int(max_players_match.group(1))
         current_players = int(current_players_match.group(1))
@@ -29,13 +30,33 @@ def get_xonotic_server_status(host: str, port: int = 26001):
         return {
             'players': current_players,
             'max_players': max_players,
-            'available_slots': available_slots
+            'available_slots': available_slots,
+            "current_map": current_map
             }
 
     except socket.timeout:
         return {"error": "The server do not responding"}
     except Exception as e:
         return {"error": str(e)}
+    
+def monitor_server_for_end_of_game(host:str, port:str):
+    map = None
+    while True:
+        status = get_xonotic_server_status(host, port)
+        if status:
+            players = status['players']
+
+            print(f"Serveur sur {host}:{port} - Joueurs: {players}/{max_players} - Places disponibles: {available_slots} - Map: {current_map}")
+
+            if players <= 1:
+                print(f"Partie terminée sur la map {current_map}.")
+                handle_end_of_game()
+                break
+        # time.sleep(5)
+
+def handle_end_of_game():
+    pass
+
 
 @dataclass
 class Server() :
