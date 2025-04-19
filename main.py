@@ -45,11 +45,7 @@ def monitor_server_for_end_of_game(host:str, port:str):
         status = get_xonotic_server_status(host, port)
         if status:
             players = status['players']
-
-            print(f"Serveur sur {host}:{port} - Joueurs: {players}/{max_players} - Places disponibles: {available_slots} - Map: {current_map}")
-
             if players <= 1:
-                print(f"Partie terminée sur la map {current_map}.")
                 handle_end_of_game()
                 break
         # time.sleep(5)
