@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 import json
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, HTTPException
 import socket
 import re
 
 with open("config/server_list.json", "r") as f:
     server_list = json.load(f)
 
+wating_list = []
 
 def get_xonotic_server_status(host: str, port: int = 26000):
     request = b'\xFF\xFF\xFF\xFFgetstatus'
@@ -78,3 +79,21 @@ def get_server_by_id(id:int = Path(ge = 0)) -> Server :
 def server_status (id:int = Path(ge = 0)):
     server =server_list[id]
     return get_xonotic_server_status("192.168.1.155", server["port"])
+
+@app.post("/waiting_list/")
+def add_user_to_waiting_list(name:str) -> str:
+    if name in wating_list:
+        raise HTTPException(status_code=404, detail=f"User {name} already in waiting list")
+    wating_list.append(name)
+    return name
+
+@app.get("/waiting_list")
+def get_waiting_list() -> list:
+    return wating_list
+
+@app.delete("/waiting_list/")
+def remove_from_waiting_list(name):
+    if name in wating_list:
+        wating_list.remove(name)
+    else:
+        raise HTTPException(status_code=404, detail=f"User {name} no exist in waiting list")
