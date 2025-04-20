@@ -57,6 +57,7 @@ def handle_end_of_game():
 @dataclass
 class Server() :
     id: int
+    ip_address: str
     port: int
 
 app = FastAPI()
