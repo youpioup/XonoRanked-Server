@@ -101,11 +101,13 @@ def remove_from_waiting_list(name):
         raise HTTPException(status_code=404, detail=f"User {name} no exist in waiting list")
 
 @app.get("/waiting_list/player_can_join")
-def player_can_join() -> bool:
+def player_can_join() -> dict:
     global can_join
-    server = server_list[1]
+    # server = server_list[1]
     if len(wating_list) >= 2:
         can_join = True
-    if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
-        can_join == False
-    return can_join
+    # if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
+    #     can_join == False
+    return {
+        "can_join": can_join
+        }
