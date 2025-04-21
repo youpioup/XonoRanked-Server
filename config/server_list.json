@@ -1,12 +1,12 @@
 [
     {
         "id": 0,
-        "ip_address": "192.168.1.155",
+        "ip_address": "youpioup.hopto.org",
         "port": 26001
     },
     {
         "id": 1,
-        "ip_address": "192.168.1.155",
+        "ip_address": "youpioup.hopto.org",
         "port": 26000
     }
 ]
