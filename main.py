@@ -5,7 +5,6 @@ import socket
 import re
 
 wating_list = []
-can_join:bool = False
 
 with open("config/server_list.json", "r") as f:
     server_list = json.load(f)
@@ -51,7 +50,6 @@ def monitor_server_for_end_of_game(host:str, port:str):
             if players <= 1:
                 handle_end_of_game()
                 break
-        # time.sleep(5)
 
 def handle_end_of_game():
     pass
@@ -102,12 +100,10 @@ def remove_from_waiting_list(name):
 
 @app.get("/waiting_list/player_can_join")
 def player_can_join() -> dict:
-    global can_join
-    # server = server_list[1]
     if len(wating_list) >= 2:
         can_join = True
-    # if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
-    #     can_join == False
+    else:
+        can_join = False
     return {
         "can_join": can_join
         }
