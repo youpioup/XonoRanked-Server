@@ -103,11 +103,13 @@ def remove_from_waiting_list(name):
 @app.get("/waiting_list/player_can_join")
 def player_can_join() -> dict:
     global can_join
-    # server = server_list[1]
+    server = server_list[1]
+    print(server)
+    print(get_xonotic_server_status(server["ip_address"], server["port"]))
     if len(wating_list) >= 2:
         can_join = True
-    # if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
-    #     can_join == False
+    if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
+        can_join = False
     return {
         "can_join": can_join
         }
