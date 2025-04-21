@@ -4,10 +4,12 @@ from fastapi import FastAPI, Path, HTTPException
 import socket
 import re
 
+wating_list = []
+can_join:bool = False
+
 with open("config/server_list.json", "r") as f:
     server_list = json.load(f)
 
-wating_list = []
 
 def get_xonotic_server_status(host: str, port: int = 26000):
     request = b'\xFF\xFF\xFF\xFFgetstatus'
@@ -78,7 +80,7 @@ def get_server_by_id(id:int = Path(ge = 0)) -> Server :
 @app.get("/server_status/{id}")
 def server_status (id:int = Path(ge = 0)):
     server =server_list[id]
-    return get_xonotic_server_status("192.168.1.155", server["port"])
+    return get_xonotic_server_status(server["ip_address"], server["port"])
 
 @app.post("/waiting_list/")
 def add_user_to_waiting_list(name:str) -> str:
@@ -97,3 +99,13 @@ def remove_from_waiting_list(name):
         wating_list.remove(name)
     else:
         raise HTTPException(status_code=404, detail=f"User {name} no exist in waiting list")
+
+@app.get("/waiting_list/player_can_join")
+def player_can_join() -> bool:
+    global can_join
+    server = server_list[1]
+    if len(wating_list) >= 2:
+        can_join = True
+    if get_xonotic_server_status(server["ip_address"], server["port"])["players"] == 2:
+        can_join == False
+    return can_join
