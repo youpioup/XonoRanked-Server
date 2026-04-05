@@ -1,0 +1,12 @@
+[
+  {
+    "id": 0,
+    "ip_address": "address or server url",
+    "port": 26001
+  },
+  {
+    "id": 1,
+    "ip_address": "address or server url",
+    "port": 26000
+  }
+]
